@@ -1,0 +1,94 @@
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:dubbo="http://dubbo.apache.org/schema/dubbo"
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:elasticsearch="http://www.springframework.org/schema/data/elasticsearch"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://dubbo.apache.org/schema/dubbo 
+       http://dubbo.apache.org/schema/dubbo/dubbo.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/data/elasticsearch 
+	   http://www.springframework.org/schema/data/elasticsearch/spring-elasticsearch-1.0.xsd">
+
+
+  
+  <!-- 配置redis的配置 -->
+	<!-- <bean id="jedisConnectionFactory"
+		class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
+		p:use-pool="true" p:port="6379" p:hostName="XXXXX" /> -->
+
+
+	<!-- 声明bean对象 redis string的序列化 -->
+	<!-- <bean id="stringRedisSerializer"
+		class="org.springframework.data.redis.serializer.StringRedisSerializer" /> -->
+
+	<!-- 声明bean对象 json序列化方式 -->
+	<!-- <bean id="genericJackson2JsonRedisSerializer"
+		class="org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer" />
+ -->
+
+	<!-- 声明bean对象 jdk 序列化方式 -->
+	<!-- <bean id="jdkSerializationRedisSerializer"
+		class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer" />
+ -->
+
+	<!-- 配置一个redis模板对象 -->
+<!-- 	<bean id="redisTemplate"
+		class="org.springframework.data.redis.core.RedisTemplate"
+		p:connection-factory-ref="jedisConnectionFactory">
+		<property name="keySerializer" ref="stringRedisSerializer" />
+		只修改value
+		<property name="valueSerializer"
+			ref="genericJackson2JsonRedisSerializer" />
+		配置hash的key与value的序列化方式
+		<property name="hashKeySerializer"
+			ref="stringRedisSerializer" />
+		<property name="hashValueSerializer"
+			ref="genericJackson2JsonRedisSerializer" />
+	</bean> -->
+	
+	
+	
+  
+	<!--5、 配置jdbc事务管理器 -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+
+	<!--配置事务 transaction-manager:表示关联的事务管理器是谁 -->
+	<tx:advice transaction-manager="transactionManager"
+		id="txAdvice">
+		<!-- 事务属性配置 -->
+		<tx:attributes>
+			<!-- 以find.select get开头的方法为只读事务，用来提高数据库的性能 -->
+			<tx:method name="find*" read-only="true" />
+			<tx:method name="select*" read-only="true" />
+			<tx:method name="get*" read-only="true" />
+			<tx:method name="load*" read-only="true" />
+			<tx:method name="list*" read-only="true" />
+			<!-- 配置事务
+			<tx:method name="insertObject" propagation="REQUIRED" isolation="DEFAULT"/>
+			<tx:method name="insertObjects" propagation="REQUIRES_NEW" isolation="DEFAULT"/>
+			 -->
+			<!-- 其他的方法为默认事务-->
+			<tx:method name="*" propagation="REQUIRED" />
+			 
+		</tx:attributes>
+	</tx:advice>
+
+	<!-- 7、配置aop -->
+	<aop:config>
+		<!-- 配置切点表达式 -->
+		<aop:pointcut
+			expression="execution(* com.liuhao.service.*.*(..))"
+			id="pointcut" />
+		<!-- 关联事务 -->
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="pointcut" />
+	</aop:config>
+
+</beans>

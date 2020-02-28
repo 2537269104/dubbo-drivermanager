@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liuhao.mapper.DriverManagerMapper">
+
+        <!-- 查询司机驾驶证列表-->
+	     <select id="selectDriverList" resultType="Driver">
+       select d.*,c1.cityname pname,c2.cityname cname, c3.cityname xname from c_driver d LEFT JOIN city c1 on d.pid=c1.id LEFT JOIN city c2 on d.cid=c2.id LEFT JOIN
+        city c3 on d.xid =c3.id       
+        
+        <where>
+            <if test="name!=null and name!=''">
+                name like '%${name}%'
+            </if>
+        </where>
+        
+	</select>	  
+
+      <select id="selectBreakList" resultType="DriverBreak">
+      select d.name,d.driver_num,b.* from c_break b LEFT JOIN c_driver d on b.did=d.id where b.did = #{id}
+      </select>
+   
+     <select id="selectByPid" resultType="City">
+     SELECT id,cityname from city where pid =#{i}
+     </select>
+   
+     
+     <insert id="insert">
+     INSERT INTO `zhuanggao3`.`c_driver` 
+     (`id`, `name`, `sex`, `pid`, `cid`, `xid`, `issue_date`, `break_num`, `driver_num`) 
+     VALUES (null, #{driver.name}, #{driver.sex}, #{driver.pid}, #{driver.cid}, #{driver.xid}, #{driver.issue_date}, 0, #{driver.driver_num})
+     
+     </insert>
+   
+     <select id="selectDriverById" resultType="Driver">
+       
+      select * from c_driver where id=#{id}
+      
+      </select>
+   
+   <update id="update">
+   UPDATE `zhuanggao3`.`c_driver` SET 
+   `name`=#{driver.name}, `sex`=#{driver.sex}, `pid`=#{driver.pid}, `cid`=#{driver.cid}, `xid`=#{driver.xid}, 
+   `issue_date`=#{driver.issue_date}, `driver_num`=#{driver.driver_num}
+    WHERE (`id`=#{driver.id});
+   
+   
+   </update>
+   
+</mapper>
