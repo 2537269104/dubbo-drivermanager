@@ -37,7 +37,7 @@
 		<dubbo.version>2.7.3</dubbo.version>
 		<jsp-api.version>2.2</jsp-api.version>
 		<json-simple.version>1.1.1</json-simple.version>
-		<gson.version>2.8.5</gson.version>
+		<gson.version>2.8.9</gson.version>
 		<kafka.version>0.8.2.1</kafka.version>
 		<ik.version>2012_u6</ik.version>
 		<lucene.version>7.2.1</lucene.version>
